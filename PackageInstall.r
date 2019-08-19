@@ -1,7 +1,0 @@
-install.packages("quantmod")
-install.packages("PerformanceAnalytics")
-install.packages("fOptions")
-install.packages("FinancialInstrument")
-install.packages("RTAQ")
-install.packages("blotter")
-install.packages("quantstrat")
