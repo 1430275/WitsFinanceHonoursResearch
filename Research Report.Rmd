@@ -9,35 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-<br>
-<br>
-We first import the 2 packages used in the importing and cleaning of the data:
-
 
 ```{r, message=FALSE, warning=FALSE}
-library(readxl)
-library(janitor)
-```
-
-<br>
-Using the "readxl" package, we import the raw data from the excel file and select the "Price (D)" sheet and all the data it contains
-This is then coerced into a dataframe object.
-<br>
-
-```{r, message=FALSE, warning=FALSE}
-PriceData <- read_excel("C:/Users/shane/University/2019/Research Report/Data/Price-Volume-MarketCap.xlsx", 
-                        sheet = "Price (D)", 
-                        na = ""
-                        )
-
-df <-  as.data.frame(PriceData)
-```
-
-<br>
-
-The "janitor" package contains a variety of functions to clean data and remove any unnecessary variables and/or observations.
-Using the 'remove_empty' function, we remove all variables (columns) that contain only "#N/A" observations.
-
-```{r, message=FALSE, warning=FALSE}
-df1 <-  remove_empty(df, "cols")
 ```
