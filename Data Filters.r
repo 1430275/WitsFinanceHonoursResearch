@@ -1,4 +1,8 @@
 library(dplyr)
+library(naniar)
 
+        
 
-PriceData <- subset.data.frame(Pricedf, c(Pricedf[, 1:449]) >100)
+PriceData <- replace_with_na_all(Pricedf, ~.x < 100)
+
+PriceData2 <-  remove_empty(PriceData, "cols")
