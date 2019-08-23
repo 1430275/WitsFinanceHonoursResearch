@@ -47,9 +47,4 @@ maxDD <-  function(column, lb){
 ddDf <-  as.data.frame(sapply(Pricedf[-1], maxDD, lb = lkbk))
 
 d <- Pricedf[[1]]
-
-d[ddDf[[1]] < -0.2]
-
-
-test <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-maxDD(test, lkbk)
+d[ddDf[[1]] < -0.1]
