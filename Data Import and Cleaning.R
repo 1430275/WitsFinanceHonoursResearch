@@ -1,6 +1,7 @@
 rm(list = ls())
 
 library(googledrive)
+library(dbplyr)
 library(readxl)
 library(janitor)
 library(naniar)
@@ -18,6 +19,8 @@ PriceData <- read_excel("Price-Volume-MarketCap.xlsx",
 VolumeData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Volume (D)") 
 
+file.remove("Price-Volume-MarketCap.xlsx")
+
 NaFunction <-  function(column){
   !all(is.na(column))
 }
@@ -30,7 +33,7 @@ Pricedf$Date <-  as.Date(Pricedf$Date)
 Volumedf <-  VolumeData[exclV]
 #Volumedf$Date <-  as.Date(Volumedf$Date)
 
-rm(PriceData, VolumeData, id, exclP, exclV)
+rm(PriceData, VolumeData, id, exclP, exclV, NaFunction)
 
 maxDD <-  function(column, lb){
   dd <- vector(mode = "double", length = (length(column) - lb))
@@ -46,5 +49,5 @@ maxDD <-  function(column, lb){
 
 ddDf <-  as.data.frame(sapply(Pricedf[-1], maxDD, lb = lkbk))
 
-d <- Pricedf[[1]]
-d[ddDf[[1]] < -0.1]
+ddDf <-  cbind(Pricedf$Date, ddDf)
+names(ddDf)[names(ddDf) == "Pricedf$Date"] <- "Date"
