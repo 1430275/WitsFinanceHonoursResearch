@@ -1,10 +1,7 @@
 rm(list = ls())
 
 library(googledrive)
-library(dbplyr)
 library(readxl)
-library(janitor)
-library(naniar)
 library(xts)
 library(lubridate)
 
