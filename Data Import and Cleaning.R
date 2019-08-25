@@ -16,11 +16,26 @@ PriceData <- read_excel("Price-Volume-MarketCap.xlsx",
 VolumeData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Volume (D)") 
 
-file.remove("Price-Volume-MarketCap.xlsx")
+#file.remove("Price-Volume-MarketCap.xlsx")
 
 NaFunction <-  function(column){
   !all(is.na(column))
 }
+
+#ZAr100Filter <-  function(column){
+#  PriceData<- vector(mode = "double", length = (length(column)))
+#  for (i in 1:length(column)){
+#    if(column[i] < 100){
+#      PriceData[i] <- NA
+#    } else{
+#      PriceData[i]
+#    }
+#  }
+#  return(PriceData)
+#}
+
+#test <- as.data.frame(sapply(PriceData[-1], ZAr100Filter))
+
 
 exclP <-  sapply(PriceData, NaFunction)
 exclV <-  sapply(VolumeData, NaFunction)
@@ -30,7 +45,6 @@ Pricedf$Date <-  as.Date(Pricedf$Date)
 Volumedf <-  VolumeData[exclV]
 #Volumedf$Date <-  as.Date(Volumedf$Date)
 
-rm(PriceData, VolumeData, id, exclP, exclV, NaFunction)
 
 maxDD <-  function(column, lb){
   dd <- vector(mode = "double", length = (length(column) - lb))
@@ -44,7 +58,30 @@ maxDD <-  function(column, lb){
   return(dd)
 }
 
-ddDf <-  as.data.frame(sapply(Pricedf[-1], maxDD, lb = lkbk))
+DDdf <-  as.data.frame(sapply(Pricedf[-1], maxDD, lb = lkbk))
+DDdf <-  cbind(Pricedf$Date, DDdf)
+names(DDdf)[names(DDdf) == "Pricedf$Date"] <- "Date"
 
-ddDf <-  cbind(Pricedf$Date, ddDf)
-names(ddDf)[names(ddDf) == "Pricedf$Date"] <- "Date"
+minDU <-  function(column, lb){
+  du <- vector(mode = "double", length = (length(column) - lb))
+  for (i in (lb+1):length(column)){
+    if(is.na(min(column[(i-lb):i]))){
+      du[i] <- NA
+    } else{
+      du[i] <- (column[i] - min(column[(i-lb):i], na.rm = T))/min(column[(i-lb):i], na.rm = T)
+    }
+  }
+ return(du)
+}
+
+DUdf <-  as.data.frame(sapply(Pricedf[-1], minDU, lb = lkbk))
+DUdf <-  cbind(Pricedf$Date, DUdf)
+names(DUdf)[names(DUdf) == "Pricedf$Date"] <- "Date"
+
+
+dateDD <- DDdf$Date
+dateDU <- DUdf$Date
+
+DDtrig <- lapply(2:ncol(DDdf), function(i) dateDD[DDdf[[i]] < - 0.15])
+
+rm(list=setdiff(ls(), "DDtrig"))
