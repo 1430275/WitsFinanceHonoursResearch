@@ -21,7 +21,7 @@ VolumeData <- read_excel("Price-Volume-MarketCap.xlsx",
 
 ###Function Declaration
 NaFunction <-  function(column){
-  !all(is.na(column))
+  !all(is.na(column) | column == 0)
 }
 
 ZAr100Filter <-  function(column){
@@ -41,10 +41,10 @@ ZAr100Filter <-  function(column){
 exclP <-  sapply(PriceData, NaFunction)
 exclV <-  sapply(VolumeData, NaFunction)
 
-Pricedf <-  PriceData[exclP]
-Pricedf$Date <-  as.Date(Pricedf$Date)
-Volumedf <-  VolumeData[exclV]
-Volumedf$Date <-  as.Date(Volumedf$Date)
+PriceData <-  PriceData[exclP]
+PriceData$Date <-  as.Date(PriceData$Date)
+VolumeData <-  VolumeData[exclV]
+VolumeData$Date <-  as.Date(VolumeData$Date)
 
 maxDD <-  function(column, lb){
   dd <- vector(mode = "double", length = (length(column) - lb))
@@ -70,13 +70,13 @@ minDU <-  function(column, lb){
  return(du)
 }
 
-DDdf <-  as.data.frame(sapply(Pricedf[-1], maxDD, lb = lkbk))
-DDdf <-  cbind(Pricedf$Date, DDdf)
-names(DDdf)[names(DDdf) == "Pricedf$Date"] <- "Date"
+DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lkbk))
+DDdf <-  cbind(PriceData$Date, DDdf)
+names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
 
-DUdf <-  as.data.frame(sapply(Pricedf[-1], minDU, lb = lkbk))
-DUdf <-  cbind(Pricedf$Date, DUdf)
-names(DUdf)[names(DUdf) == "Pricedf$Date"] <- "Date"
+DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lkbk))
+DUdf <-  cbind(PriceData$Date, DUdf)
+names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
 dateDD <- DDdf$Date
 dateDU <- DUdf$Date
@@ -84,4 +84,12 @@ dateDU <- DUdf$Date
 DDtrig <- lapply(2:ncol(DDdf), function(i) dateDD[DDdf[[i]] < - 0.15])
 DUtrig <- lapply(2:ncol(DUdf), function(i) dateDU[DUdf[[i]] < - 0.15])
 
-rm(list=setdiff(ls(), c("DDtrig", "DUtrig")))
+exclDD <-  sapply(DDtrig, NaFunction)
+DDtrig <-  DDtrig[exclDD]
+
+exclDU <-  sapply(DUtrig, NaFunction)
+DUtrig <-  DUtrig[exclDU]
+
+
+
+#rm(list=setdiff(ls(), c("DDtrig", "DUtrig")))
