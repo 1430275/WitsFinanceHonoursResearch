@@ -11,4 +11,95 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r, message=FALSE, warning=FALSE}
+library(googledrive)
+library(readxl)
+library(xts)
+library(lubridate)
 ```
+
+
+```{r, message=FALSE, warning=FALSE}
+id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
+try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
+
+PriceData <- read_excel("Price-Volume-MarketCap.xlsx", 
+                        sheet = "Price (D)") 
+VolumeData <- read_excel("Price-Volume-MarketCap.xlsx", 
+                        sheet = "Volume (D)") 
+
+#file.remove("Price-Volume-MarketCap.xlsx")
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+NaFunction <-  function(column){
+  !all(is.na(column) | column == 0)
+}
+
+#ZAr100Filter <-  function(column){
+#  PriceData<- vector(mode = "double", length = (length(column)))
+#  for (i in 1:length(column)){
+#    if(column[i] < 100){
+#      PriceData[i] <- NA
+#    } else{
+#      PriceData[i]
+#    }
+#  }
+#  return(PriceData)
+#}
+
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+exclP <-  sapply(PriceData, NaFunction)
+exclV <-  sapply(VolumeData, NaFunction)
+
+PriceData <-  PriceData[exclP]
+PriceData$Date <-  as.Date(PriceData$Date)
+VolumeData <-  VolumeData[exclV]
+VolumeData$Date <-  as.Date(VolumeData$Date)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+
+#settings
+lkbk <- 5
+
+maxDD <-  function(column, lb){
+  dd <- vector(mode = "double", length = (length(column) - lb))
+  for (i in (lb+1):length(column)){
+    if(is.na(max(column[(i-lb):i]))){
+      dd[i] <- NA
+    } else{
+      dd[i] <- (column[i] - max(column[(i-lb):i], na.rm = T))/max(column[(i-lb):i], na.rm = T)
+    }
+  }
+  return(dd)
+}
+
+minDU <-  function(column, lb){
+  du <- vector(mode = "double", length = (length(column) - lb))
+  for (i in (lb+1):length(column)){
+    if(is.na(min(column[(i-lb):i]))){
+      du[i] <- NA
+    } else{
+      du[i] <- (column[i] - min(column[(i-lb):i], na.rm = T))/min(column[(i-lb):i], na.rm = T)
+    }
+  }
+ return(du)
+}
+
+DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lkbk))
+DDdf <-  cbind(PriceData$Date, DDdf)
+names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
+
+DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lkbk))
+DUdf <-  cbind(PriceData$Date, DUdf)
+names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
+
+
+```
+
+
