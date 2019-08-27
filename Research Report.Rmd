@@ -9,6 +9,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<h3> Introduction </h3>
+
+
+
+
+<h3> Methodology </h3>
+
+<h5> Step 1: </h5>
+
+We import the libraries
 
 ```{r, message=FALSE, warning=FALSE}
 library(googledrive)
@@ -19,8 +29,8 @@ library(lubridate)
 
 
 ```{r, message=FALSE, warning=FALSE}
-id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
-try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
+#id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
+#try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
 
 PriceData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Price (D)") 

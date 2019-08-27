@@ -186,12 +186,22 @@ summary {
 </div>
 
 
+<h3>
+Introduction
+</h3>
+<h3>
+Methodology
+</h3>
+<h5>
+Step 1:
+</h5>
+<p>We import the libraries</p>
 <pre class="r"><code>library(googledrive)
 library(readxl)
 library(xts)
 library(lubridate)</code></pre>
-<pre class="r"><code>id &lt;-  &quot;1SGigXMnzubpP15Y1W18GqnlVQFiv95jN&quot;
-try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
+<pre class="r"><code>#id &lt;-  &quot;1SGigXMnzubpP15Y1W18GqnlVQFiv95jN&quot;
+#try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
 
 PriceData &lt;- read_excel(&quot;Price-Volume-MarketCap.xlsx&quot;, 
                         sheet = &quot;Price (D)&quot;) 
