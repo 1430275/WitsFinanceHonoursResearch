@@ -4,6 +4,7 @@ library(googledrive)
 library(readxl)
 library(xts)
 library(lubridate)
+library(dplyr)
 
 id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
 try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
@@ -19,6 +20,14 @@ VolumeData <- read_excel("Price-Volume-MarketCap.xlsx",
 ###Function Declaration
 NaFunction <-  function(column){
   !all(is.na(column) | column == 0)
+}
+
+colClean1 <- function(x){
+  gsub(" SJ Equity", "", names(x), fixed = TRUE)
+}
+
+colClean2 <- function(x){
+  gsub(".SJ.Equity", "", names(x), fixed = TRUE)
 }
 
 #ZAr100Filter <-  function(column){
@@ -43,11 +52,11 @@ PriceData$Date <-  as.Date(PriceData$Date)
 VolumeData <-  VolumeData[exclV]
 VolumeData$Date <-  as.Date(VolumeData$Date)
 
+names(PriceData) <- colClean1(PriceData)
+names(VolumeData) <- colClean1(VolumeData)
 
 #settings
 lookback <- 5 
-triggerDD <- -0.15
-triggerDU <- 0.15
 window <- 5
 
 maxDD <-  function(column, lb){
@@ -82,8 +91,18 @@ DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
 DUdf <-  cbind(PriceData$Date, DUdf)
 names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
+
+
+###############################
+
+
+
+DDdf <- read.xlsx(xlsxFile = "DDdf.xlsx", detectDates = TRUE, skipEmptyCols = FALSE, skipEmptyRows = FALSE)
+DUdf <- read.xlsx(xlsxFile = "DUdf.xlsx", detectDates = TRUE, skipEmptyCols = FALSE, skipEmptyRows = FALSE)
+
 trigIndexDD <- lapply(DDdf[-1], function(i){
   trigDD <- vector(mode = "integer", length = 1)
+  triggerDD <- -0.15
   l = length(i)
   s = 0
   pos = 1
@@ -100,17 +119,23 @@ trigIndexDD <- lapply(DDdf[-1], function(i){
   return(trigDD)
 })
 
-lapply(trigIndexDD, function(x){
+dateIndexDD <- lapply(trigIndexDD, function(x){
   DDdf$Date[x]
 })
 
+excldiDD <-  sapply(dateIndexDD, NaFunction)
+dateIndexDD <- dateIndexDD[excldiDD]
+
+
+
 trigIndexDU <- lapply(DUdf[-1], function(i){
   trigDU <- vector(mode = "integer", length = 1)
+  triggerDU <- 0.15
   l = length(i)
   s = 0
   pos = 1
   while(s <= l){
-    x = which(i[(s+1):l] <= -triggerDU)[1]+s
+    x = which(i[(s+1):l] <= triggerDU)[1]+s
     if(is.na(x)){
       break
     } else{
@@ -122,6 +147,14 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
   return(trigDU)
 })
 
-lapply(trigIndexDU, function(x){
+dateIndexDU <- lapply(trigIndexDU, function(x){
   DUdf$Date[x]
 })
+
+
+excldiDU <-  sapply(dateIndexDU, NaFunction)
+dateIndexDU <- dateIndexDU[excldiDU]
+
+names(dateIndexDD) <- colClean2(dateIndexDD)
+names(dateIndexDU) <- colClean2(dateIndexDU)
+
