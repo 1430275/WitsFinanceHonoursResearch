@@ -22,6 +22,7 @@ NaFunction <-  function(column){
   !all(is.na(column) | column == 0)
 }
 
+
 colClean1 <- function(x){
   gsub(" SJ Equity", "", names(x), fixed = TRUE)
 }
@@ -58,12 +59,14 @@ names(VolumeData) <- colClean1(VolumeData)
 #settings
 lookback <- 5 
 window <- 5
+triggerDD <- -0.15
+triggerDU <- 0.15
 
 maxDD <-  function(column, lb){
   dd <- vector(mode = "double", length = (length(column) - lb))
   for (i in (lb+1):length(column)){
     if(is.na(max(column[(i-lb):i]))){
-      dd[i] <- NA
+      dd[i] <- 0
     } else{
       dd[i] <- (column[i] - max(column[(i-lb):i], na.rm = T))/max(column[(i-lb):i], na.rm = T)
     }
@@ -79,7 +82,7 @@ minDU <-  function(column, lb){
   du <- vector(mode = "double", length = (length(column) - lb))
   for (i in (lb+1):length(column)){
     if(is.na(min(column[(i-lb):i]))){
-      du[i] <- NA
+      du[i] <- 0
     } else{
       du[i] <- (column[i] - min(column[(i-lb):i], na.rm = T))/min(column[(i-lb):i], na.rm = T)
     }
@@ -91,23 +94,25 @@ DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
 DUdf <-  cbind(PriceData$Date, DUdf)
 names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
+#DDdf <-  DDdf[-c(1:5), ]
+#DUdf <-  DUdf[-c(1:5), ]
+
+#exclDD <-  sapply(DDdf, NaFunction)
+#DDdf <- DDdf[exclDD]
+
+#exclDU <-  sapply(DUdf, NaFunction)
+#DUdf <- DUdf[exclDU]
 
 
-###############################
 
-
-
-DDdf <- read.xlsx(xlsxFile = "DDdf.xlsx", detectDates = TRUE, skipEmptyCols = FALSE, skipEmptyRows = FALSE)
-DUdf <- read.xlsx(xlsxFile = "DUdf.xlsx", detectDates = TRUE, skipEmptyCols = FALSE, skipEmptyRows = FALSE)
 
 trigIndexDD <- lapply(DDdf[-1], function(i){
   trigDD <- vector(mode = "integer", length = 1)
-  triggerDD <- -0.15
   l = length(i)
   s = 0
   pos = 1
   while(s <= l){
-    x = which(i[(s+1):l] <= -triggerDD)[1]+s
+    x = which(i[(s+1):l] <= triggerDD)[1]+s
     if(is.na(x)){
       break
     } else{
@@ -119,23 +124,13 @@ trigIndexDD <- lapply(DDdf[-1], function(i){
   return(trigDD)
 })
 
-dateIndexDD <- lapply(trigIndexDD, function(x){
-  DDdf$Date[x]
-})
-
-excldiDD <-  sapply(dateIndexDD, NaFunction)
-dateIndexDD <- dateIndexDD[excldiDD]
-
-
-
 trigIndexDU <- lapply(DUdf[-1], function(i){
   trigDU <- vector(mode = "integer", length = 1)
-  triggerDU <- 0.15
   l = length(i)
   s = 0
   pos = 1
   while(s <= l){
-    x = which(i[(s+1):l] <= triggerDU)[1]+s
+    x = which(i[(s+1):l] >= triggerDU)[1]+s
     if(is.na(x)){
       break
     } else{
@@ -147,14 +142,42 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
   return(trigDU)
 })
 
-dateIndexDU <- lapply(trigIndexDU, function(x){
-  DUdf$Date[x]
-})
+#valuesDD <-  sapply(PriceData[-1], function(i){
+#  PriceData[[i]][match(unlist(trigIndexDD[,i]), PriceData[[i]])]
+#})
+
+valueDD <-  PriceData[[2]][trigIndexDD[[1]]]
 
 
-excldiDU <-  sapply(dateIndexDU, NaFunction)
-dateIndexDU <- dateIndexDU[excldiDU]
 
-names(dateIndexDD) <- colClean2(dateIndexDD)
-names(dateIndexDU) <- colClean2(dateIndexDU)
+##########################
+#dateIndexDD <- lapply(trigIndexDD, function(x){
+#    PriceData[[x]]
+#})
 
+#excldiDD <-  sapply(dateIndexDD, NaFunction)
+#dateIndexDD <- dateIndexDD[excldiDD]
+
+#dateIndexDU <- lapply(trigIndexDU, function(x){
+#    PriceData[[x]]
+#})
+
+#excldiDU <-  sapply(dateIndexDU, NaFunction)
+#dateIndexDU <- dateIndexDU[excldiDU]
+
+#names(dateIndexDD) <- colClean2(dateIndexDD)
+#names(dateIndexDU) <- colClean2(dateIndexDU)
+
+#rowIndex <-  function(columnP, columnD){
+#  rowDD <- vector(mode = "integer", length = length(columnD))
+#  for ( i in 1:length(column)){
+#    rowIndex[i] <-  which(grepl())
+    
+#  }
+#}
+
+#rowIndexDD <-  lapply(dateIndexDD, function(i){
+#  for (i in 1:278){
+#    grepl()
+#  }
+#})
