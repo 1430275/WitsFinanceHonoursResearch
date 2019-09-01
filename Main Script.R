@@ -2,18 +2,13 @@ rm(list = ls())
 
 library(googledrive)
 library(readxl)
-library(xts)
 library(lubridate)
-library(dplyr)
+
 
 id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
 try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
-
 PriceData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Price (D)") 
-VolumeData <- read_excel("Price-Volume-MarketCap.xlsx", 
-                        sheet = "Volume (D)") 
-
 #file.remove("Price-Volume-MarketCap.xlsx")
 
 
@@ -31,30 +26,11 @@ colClean2 <- function(x){
   gsub(".SJ.Equity", "", names(x), fixed = TRUE)
 }
 
-#ZAr100Filter <-  function(column){
-#  PriceData<- vector(mode = "double", length = (length(column)))
-#  for (i in 1:length(column)){
-#    if(column[i] < 100){
-#      PriceData[i] <- NA
-#    } else{
-#      PriceData[i]
-#    }
-#  }
-#  return(PriceData)
-#}
-
-#test <- as.data.frame(sapply(PriceData[-1], ZAr100Filter))
-
 exclP <-  sapply(PriceData, NaFunction)
-exclV <-  sapply(VolumeData, NaFunction)
 
 PriceData <-  PriceData[exclP]
 PriceData$Date <-  as.Date(PriceData$Date)
-VolumeData <-  VolumeData[exclV]
-VolumeData$Date <-  as.Date(VolumeData$Date)
-
 names(PriceData) <- colClean1(PriceData)
-names(VolumeData) <- colClean1(VolumeData)
 
 #settings
 lookback <- 5 
@@ -94,17 +70,9 @@ DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
 DUdf <-  cbind(PriceData$Date, DUdf)
 names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
-#DDdf <-  DDdf[-c(1:5), ]
-#DUdf <-  DUdf[-c(1:5), ]
-
-#exclDD <-  sapply(DDdf, NaFunction)
-#DDdf <- DDdf[exclDD]
-
-#exclDU <-  sapply(DUdf, NaFunction)
-#DUdf <- DUdf[exclDU]
-
-
-
+DDdf <-  DDdf[-c(1:5), ]
+DUdf <-  DUdf[-c(1:5), ]
+PriceData <-  PriceData[-c(1:5), ]
 
 trigIndexDD <- lapply(DDdf[-1], function(i){
   trigDD <- vector(mode = "integer", length = 1)
@@ -142,13 +110,11 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
   return(trigDU)
 })
 
-#valuesDD <-  sapply(PriceData[-1], function(i){
-#  PriceData[[i]][match(unlist(trigIndexDD[,i]), PriceData[[i]])]
-#})
+#PriceData[-1] <- as.data.frame.numeric(PriceData[-1])
+#PriceData[is.na(PriceData)] <- 0
 
-valueDD <-  PriceData[[2]][trigIndexDD[[1]]]
-
-
+#PriceDataXTS <-  xts(PriceData[-1], order.by = PriceData$Date)
+#returns(PriceDataXTS)
 
 ##########################
 #dateIndexDD <- lapply(trigIndexDD, function(x){
@@ -181,3 +147,10 @@ valueDD <-  PriceData[[2]][trigIndexDD[[1]]]
 #    grepl()
 #  }
 #})
+
+
+valuesDD <- for(i in 2:ncol(PriceData)){
+  PriceData[[i]][trigIndexDD[[i]]-1]
+}
+
+PriceData[[1]][trigIndexDD[[1]]-1]

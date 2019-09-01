@@ -25,64 +25,57 @@ We import the libraries
 ```{r, message=FALSE, warning=FALSE}
 library(googledrive)
 library(readxl)
-library(xts)
 library(lubridate)
 ```
 
 ```{r, message=FALSE, warning=FALSE}
-#id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
-#try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
-
+id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
+try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
 PriceData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Price (D)") 
-VolumeData <- read_excel("Price-Volume-MarketCap.xlsx", 
-                        sheet = "Volume (D)") 
-
 #file.remove("Price-Volume-MarketCap.xlsx")
-
 ```
 
+
+
 ```{r, message=FALSE, warning=FALSE}
+
 NaFunction <-  function(column){
   !all(is.na(column) | column == 0)
 }
 
-#ZAr100Filter <-  function(column){
-#  PriceData<- vector(mode = "double", length = (length(column)))
-#  for (i in 1:length(column)){
-#    if(column[i] < 100){
-#      PriceData[i] <- NA
-#    } else{
-#      PriceData[i]
-#    }
-#  }
-#  return(PriceData)
-#}
 
+colClean1 <- function(x){
+  gsub(" SJ Equity", "", names(x), fixed = TRUE)
+}
 
 ```
 
-```{r, message=FALSE, warning=FALSE}
-exclP <-  sapply(PriceData, NaFunction)
-exclV <-  sapply(VolumeData, NaFunction)
 
+
+```{r}
+exclP <-  sapply(PriceData, NaFunction)
 PriceData <-  PriceData[exclP]
 PriceData$Date <-  as.Date(PriceData$Date)
-VolumeData <-  VolumeData[exclV]
-VolumeData$Date <-  as.Date(VolumeData$Date)
+names(PriceData) <- colClean1(PriceData)
 ```
 
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 
-#settings
-lkbk <- 5
+lookback <- 5 
+window <- 5
+triggerDD <- -0.15
+triggerDU <- 0.15
+```
+
+```{r}
 
 maxDD <-  function(column, lb){
   dd <- vector(mode = "double", length = (length(column) - lb))
   for (i in (lb+1):length(column)){
     if(is.na(max(column[(i-lb):i]))){
-      dd[i] <- NA
+      dd[i] <- 0
     } else{
       dd[i] <- (column[i] - max(column[(i-lb):i], na.rm = T))/max(column[(i-lb):i], na.rm = T)
     }
@@ -94,7 +87,7 @@ minDU <-  function(column, lb){
   du <- vector(mode = "double", length = (length(column) - lb))
   for (i in (lb+1):length(column)){
     if(is.na(min(column[(i-lb):i]))){
-      du[i] <- NA
+      du[i] <- 0
     } else{
       du[i] <- (column[i] - min(column[(i-lb):i], na.rm = T))/min(column[(i-lb):i], na.rm = T)
     }
@@ -102,15 +95,64 @@ minDU <-  function(column, lb){
  return(du)
 }
 
-DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lkbk))
-DDdf <-  cbind(PriceData$Date, DDdf)
-names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
+```
 
-DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lkbk))
+
+```{r}
+DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
 DUdf <-  cbind(PriceData$Date, DUdf)
 names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
 
+DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lookback))
+DDdf <-  cbind(PriceData$Date, DDdf)
+names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
+
 ```
 
 
+```{r}
+DDdf <-  DDdf[-c(1:5), ]
+DUdf <-  DUdf[-c(1:5), ]
+PriceData <-  PriceData[-c(1:5), ]
+
+```
+
+```{r}
+trigIndexDD <- lapply(DDdf[-1], function(i){
+  trigDD <- vector(mode = "integer", length = 1)
+  l = length(i)
+  s = 0
+  pos = 1
+  while(s <= l){
+    x = which(i[(s+1):l] <= triggerDD)[1]+s
+    if(is.na(x)){
+      break
+    } else{
+      trigDD[pos] = x
+    }
+    s = trigDD[pos] + window
+    pos = pos + 1
+  }
+  return(trigDD)
+})
+
+trigIndexDU <- lapply(DUdf[-1], function(i){
+  trigDU <- vector(mode = "integer", length = 1)
+  l = length(i)
+  s = 0
+  pos = 1
+  while(s <= l){
+    x = which(i[(s+1):l] >= triggerDU)[1]+s
+    if(is.na(x)){
+      break
+    } else{
+      trigDU[pos] = x
+    }
+    s = trigDU[pos] + window
+    pos = pos + 1
+  }
+  return(trigDU)
+})
+
+```
