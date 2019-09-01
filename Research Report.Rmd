@@ -18,24 +18,31 @@ Furthermore, this study will add to the existing literature with regards to whet
 
 <h3> Methodology </h3>
 
-<h5> Step 1: </h5>
+<h5> Step 1: Importing Packages </h5>
 
-We import the libraries
+First we import the libraries. The 'googledrive' package allows us to fetch documents directly from Google Drive. This is where we have stored our data. The second package 'readxl' allows us to firstly import and secondly read Microsoft Excel files. This is important as our original data came from an excel spreadsheet.
 
 ```{r, message=FALSE, warning=FALSE}
 library(googledrive)
 library(readxl)
-library(lubridate)
 ```
+
+<h5> Step 2: Data Claning and Manipulation </h5>
+
+As a part of the Google Drive package, drive_download finds and downloads a file on Google Drive based on an unique identifier (id) into the working directory. If the file already exists, this cfunction is ignored.
+Using read_excel from the readxl package, the data is imported into the PriceData dataframe.
 
 ```{r, message=FALSE, warning=FALSE}
 id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
 try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
 PriceData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Price (D)") 
-#file.remove("Price-Volume-MarketCap.xlsx")
 ```
 
+We now declare 2 functions that deals with basic data cleaning. 
+NaFunction creates a data frame that consists of booleans of whether each variable in the PriceData dataframe contains only NA or 0 with false meaning that the column contains only NA or 0 and vice versa. 
+
+colClean1's purpose is to remove the "SJ Equity" from the share names in the dataframe. 
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -51,6 +58,11 @@ colClean1 <- function(x){
 
 ```
 
+exclP stores the result of running the NaFunction on PriceData. Since the NaFunction computes columns containing only NA or 0 to false, we subset PriceData where exclP is true.
+
+To ensure correct interpretation, we coerce the date column to the date data type. 
+
+Finally, we run colClean1 to remove "SJ Equity" from all the variable names.
 
 
 ```{r}
@@ -60,6 +72,11 @@ PriceData$Date <-  as.Date(PriceData$Date)
 names(PriceData) <- colClean1(PriceData)
 ```
 
+<h5> Step 3: Calculating Maximum Drawdowns and Minimum Drawups </h5>
+
+<h6> Settings </h6>
+
+This block sets parameters for the following functions
 
 ```{r}
 
