@@ -847,7 +847,7 @@ names(DUdf)[names(DUdf) == &quot;PriceData$Date&quot;] &lt;- &quot;Date&quot;</c
 Trigger Indices
 </h5>
 <p>The following 2 functions create one list of lists respectively that captures when the drawdowns and drawups exceed the trigger value defined above.</p>
-<p>The function consists of a while loop that returns the index (i.e. row number) of all the values within the column that exceed the trigger (-0.15 for drawdowns and 0.15 for drawups). An if statement if used to allow the while loop to continue ignoring any NA values</p>
+<p>The function consists of a while loop that returns the index (i.e. row number) of all the values within the column that exceed the trigger (-0.15 for drawdowns and 0.15 for drawups). An if statement is used to allow the while loop to continue ignoring any NA values</p>
 <pre class="r"><code>trigIndexDD &lt;- lapply(DDdf[-1], function(i){
   trigDD &lt;- vector(mode = &quot;integer&quot;, length = 1)
   l = length(i)
