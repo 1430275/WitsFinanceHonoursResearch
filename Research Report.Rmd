@@ -222,6 +222,8 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
 print(trigIndexDD[1:5])
 ```
 
+We now unlist the results and create a transposed dataframe that will allow us to calculate the cumluative return and thus conclude the profitability of short run reversal trading.
+
 
 ```{r}
 ultrigDD <- unlist(trigIndexDD)
