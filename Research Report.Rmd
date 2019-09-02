@@ -221,3 +221,9 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
 
 print(trigIndexDD[1:5])
 ```
+
+
+```{r}
+ultrigDD <- unlist(trigIndexDD)
+ultrigDD <- as.data.frame(t(ultrigDD))
+```

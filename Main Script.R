@@ -4,6 +4,7 @@ library(googledrive)
 library(readxl)
 library(lubridate)
 library(qrmtools)
+library(dplyr)
 
 
 id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
@@ -21,10 +22,6 @@ NaFunction <-  function(column){
 
 colClean1 <- function(x){
   gsub(" SJ Equity", "", names(x), fixed = TRUE)
-}
-
-colClean2 <- function(x){
-  gsub(".SJ.Equity", "", names(x), fixed = TRUE)
 }
 
 exclP <-  sapply(PriceData, NaFunction)
@@ -110,57 +107,18 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
   return(trigDU)
 })
 
-PriceData <-  PriceData[, -1]
+PriceDataNew <-  PriceData[, -1]
 
-PriceData <-  sapply(PriceData, function(x){
+PriceDataNew <-  sapply(PriceDataNew, function(x){
   as.numeric(x)
 })
 
-returnsDf <- as.data.frame(returns(PriceData, method = "simple"))
+returnsDf <- as.data.frame(returns(PriceDataNew, method = "simple"))
 returnsDf <-  rbind(seq(from = 0, to = 0, length.out = 448), returnsDf)
 
+ultrigDD <- unlist(trigIndexDD)
+ultrigDD <- t(ultrigDD)
 
-#PriceData[-1] <- as.data.frame.numeric(PriceData[-1])
-#PriceData[is.na(PriceData)] <- 0
-
-#PriceDataXTS <-  xts(PriceData[-1], order.by = PriceData$Date)
-#returns(PriceDataXTS)
-
-##########################
-#dateIndexDD <- lapply(trigIndexDD, function(x){
-#    PriceData[[x]]
-#})
-
-#excldiDD <-  sapply(dateIndexDD, NaFunction)
-#dateIndexDD <- dateIndexDD[excldiDD]
-
-#dateIndexDU <- lapply(trigIndexDU, function(x){
-#    PriceData[[x]]
-#})
-
-#excldiDU <-  sapply(dateIndexDU, NaFunction)
-#dateIndexDU <- dateIndexDU[excldiDU]
-
-#names(dateIndexDD) <- colClean2(dateIndexDD)
-#names(dateIndexDU) <- colClean2(dateIndexDU)
-
-#rowIndex <-  function(columnP, columnD){
-#  rowDD <- vector(mode = "integer", length = length(columnD))
-#  for ( i in 1:length(column)){
-#    rowIndex[i] <-  which(grepl())
-    
-#  }
-#}
-
-#rowIndexDD <-  lapply(dateIndexDD, function(i){
-#  for (i in 1:278){
-#    grepl()
-#  }
-#})
+# valuesDD <- mapply(function(x,y) x[sub("_3.*", "", colnames(y))], as.data.frame(returnsDf), trigIndexDD)
 
 
-#valuesDD <- for(i in 2:ncol(PriceData)){
-#  PriceData[[i]][trigIndexDD[[i]]-1]
-#}
-
-#riceData[[1]][trigIndexDD[[1]]-1]
