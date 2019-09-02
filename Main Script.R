@@ -3,6 +3,7 @@ rm(list = ls())
 library(googledrive)
 library(readxl)
 library(lubridate)
+library(qrmtools)
 
 
 id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
@@ -72,7 +73,6 @@ names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
 DDdf <-  DDdf[-c(1:5), ]
 DUdf <-  DUdf[-c(1:5), ]
-PriceData <-  PriceData[-c(1:5), ]
 
 trigIndexDD <- lapply(DDdf[-1], function(i){
   trigDD <- vector(mode = "integer", length = 1)
@@ -109,6 +109,16 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
   }
   return(trigDU)
 })
+
+PriceData <-  PriceData[, -1]
+
+PriceData <-  sapply(PriceData, function(x){
+  as.numeric(x)
+})
+
+returnsDf <- as.data.frame(returns(PriceData, method = "simple"))
+returnsDf <-  rbind(seq(from = 0, to = 0, length.out = 448), returnsDf)
+
 
 #PriceData[-1] <- as.data.frame.numeric(PriceData[-1])
 #PriceData[is.na(PriceData)] <- 0
@@ -149,8 +159,8 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
 #})
 
 
-valuesDD <- for(i in 2:ncol(PriceData)){
-  PriceData[[i]][trigIndexDD[[i]]-1]
-}
+#valuesDD <- for(i in 2:ncol(PriceData)){
+#  PriceData[[i]][trigIndexDD[[i]]-1]
+#}
 
-PriceData[[1]][trigIndexDD[[1]]-1]
+#riceData[[1]][trigIndexDD[[1]]-1]

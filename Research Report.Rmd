@@ -1,13 +1,11 @@
 ---
-title: "1445149 and 1430275"
-author: "Marc Labe and Shane Serebro"
-date: "19 August 2019"
-output: html_document
+title: "Opportunity Trading of Short Run Reversals - Evidence from the JSE"
+author: "Marc Labe(1445149) and Shane Serebro(1430275)"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 <h3> Introduction </h3>
 
@@ -18,25 +16,28 @@ Furthermore, this study will add to the existing literature with regards to whet
 
 <h3> Methodology </h3>
 
-<h5> Step 1: Importing Packages </h5>
+<h4> Step 1: Importing Packages </h4>
 
-First we import the libraries. The 'googledrive' package allows us to fetch documents directly from Google Drive. This is where we have stored our data. The second package 'readxl' allows us to firstly import and secondly read Microsoft Excel files. This is important as our original data came from an excel spreadsheet.
+First we import the libraries. The 'googledrive' package allows us to fetch documents directly from Google Drive. This is where we have stored our data. The second package 'readxl' allows us to firstly import and secondly read Microsoft Excel files. This is important as our original data came from an excel spreadsheet. Finally, the 'qrmtools' package provides a range of quantitative finance functions that will be used later on.
 
 ```{r, message=FALSE, warning=FALSE}
 library(googledrive)
 library(readxl)
+library(qrmtools)
 ```
 
-<h5> Step 2: Data Claning and Manipulation </h5>
+<h4> Step 2: Data Claning and Manipulation </h4>
 
 As a part of the Google Drive package, drive_download finds and downloads a file on Google Drive based on an unique identifier (id) into the working directory. If the file already exists, this cfunction is ignored.
 Using read_excel from the readxl package, the data is imported into the PriceData dataframe.
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval=TRUE}
 id <-  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"
-try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
+#try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)
 PriceData <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Price (D)") 
+
+knitr::kable(PriceData[1:10, 1:8])
 ```
 
 We now declare 2 functions that deals with basic data cleaning. 
@@ -72,9 +73,30 @@ PriceData$Date <-  as.Date(PriceData$Date)
 names(PriceData) <- colClean1(PriceData)
 ```
 
-<h5> Step 3: Calculating Maximum Drawdowns and Minimum Drawups </h5>
+<h5>Returns</h5>
 
-<h6> Settings </h6>
+Returns are calculated for each share.
+
+First we extract the share prices only(no dates) in order to convert the PriceData dataframe to a numeric matrix.
+
+The returns are the then calculated using the "returns" function of the qrmtools package and are then returned as a dataframe. As the returns function ignores the first row, it is inserted manually using a combination of rbind and seq.
+
+```{r}
+PriceDataNew <-  PriceData[, -1]
+
+PriceDataNew <-  sapply(PriceDataNew, function(x){
+  as.numeric(x)
+})
+
+returnsDf <- as.data.frame(returns(PriceDataNew, method = "simple"))
+returnsDf <-  rbind(seq(from = 0, to = 0, length.out = 448), returnsDf)
+
+knitr::kable(returnsDf[(1:10), (1:8)])
+```
+
+<h4> Step 3: Calculating Maximum Drawdowns and Minimum Drawups </h4>
+
+<h5> Settings </h5>
 
 This block sets parameters for the following functions
 
@@ -85,6 +107,17 @@ window <- 5
 triggerDD <- -0.15
 triggerDU <- 0.15
 ```
+
+
+<h5> Function Declarations </h5>
+
+We now declare the functions that will calculate the maximum drawdown and minimum drawups:
+
+
+1) Maximum drawdowns are calculated according to the following formula: $$ MaxDD = (P_{t} -  max(P_{t}, P_{t-lb} ))/ max(P_{t}, P_{t-lb}) $$ with $$ P_{t} $$ = the share price at time t and $$lb$$ = the lookback period (defined earlier as 5 days)
+
+We create a for loop which calculates the drawdowns according to the formula, with the result being written to a new vector that will be a component of the new data frame. However, if the calculations result in a NA, it is replaced with a 0 in the new vector
+
 
 ```{r}
 
@@ -100,6 +133,13 @@ maxDD <-  function(column, lb){
   return(dd)
 }
 
+```
+
+2) Similarly with minimum drawdowns, an identical function is created, however with the following formula:
+
+$$ MaxDD = (P_{t} -  min(P_{t}, P_{t-lb} ))/ min(P_{t}, P_{t-lb})$$
+
+```{r}
 minDU <-  function(column, lb){
   du <- vector(mode = "double", length = (length(column) - lb))
   for (i in (lb+1):length(column)){
@@ -114,26 +154,32 @@ minDU <-  function(column, lb){
 
 ```
 
+Running the function (with lb set to lookback as defined above), we created a new dataframe that stores the maximum drawdowns (DDdf) and the minimum drawups (DUdf).
 
 ```{r}
-DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
-DUdf <-  cbind(PriceData$Date, DUdf)
-names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
-
 
 DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lookback))
-DDdf <-  cbind(PriceData$Date, DDdf)
-names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
+DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
 
+knitr::kable(DDdf[(1:10), (1:8)])
 ```
+
+<h5> Cleaning and formatting </h5>
+
 
 
 ```{r}
-DDdf <-  DDdf[-c(1:5), ]
-DUdf <-  DUdf[-c(1:5), ]
-PriceData <-  PriceData[-c(1:5), ]
-
+DDdf <-  cbind(PriceData$Date, DDdf)
+names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
+DUdf <-  cbind(PriceData$Date, DUdf)
+names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 ```
+
+<h5>Trigger Indices</h5>
+
+The following 2 functions create one list of lists respectively that captures when the drawdowns and drawups exceed the trigger value defined above. 
+
+The function consists of a while loop that returns the index (i.e. row number) of all the values within the column that exceed the trigger (-0.15 for drawdowns and 0.15 for drawups). An if statement if used to allow the while loop to continue ignoring any NA values
 
 ```{r}
 trigIndexDD <- lapply(DDdf[-1], function(i){
@@ -172,4 +218,6 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
   return(trigDU)
 })
 
+
+print(trigIndexDD[1:5])
 ```
