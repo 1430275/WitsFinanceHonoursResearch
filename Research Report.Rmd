@@ -2,9 +2,9 @@
 title: "Opportunity Trading of Short Run Reversals - Evidence from the JSE"
 author: "Marc Labe(1445149) and Shane Serebro(1430275)"
 output:
+  html_document: default
   pdf_document: default
   word_document: default
-  html_document: default
 ---
 
 <h3> Introduction </h3>
@@ -179,7 +179,7 @@ names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
 The following 2 functions create one list of lists respectively that captures when the drawdowns and drawups exceed the trigger value defined above. 
 
-The function consists of a while loop that returns the index (i.e. row number) of all the values within the column that exceed the trigger (-0.15 for drawdowns and 0.15 for drawups). An if statement if used to allow the while loop to continue ignoring any NA values
+The function consists of a while loop that returns the index (i.e. row number) of all the values within the column that exceed the trigger (-0.15 for drawdowns and 0.15 for drawups). An if statement is used to allow the while loop to continue ignoring any NA values
 
 ```{r}
 trigIndexDD <- lapply(DDdf[-1], function(i){
@@ -222,8 +222,14 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
 print(trigIndexDD[1:5])
 ```
 
+We now unlist the results and create a transposed dataframe that will allow us to calculate the cumluative return and thus conclude the profitability of short run reversal trading.
+
+The transposed dataframe contains a column for each index calculated above for each share. For example, share ABG returns 6 row numbers when the trigIndexDD function is passed. After the transposition of the rows, there are 6 columns named ABG1, ABG2 ... ABG6, for each index value. This will allow for the calculation of the cumulative returns for each triggered event.
+
 
 ```{r}
 ultrigDD <- unlist(trigIndexDD)
 ultrigDD <- as.data.frame(t(ultrigDD))
+
+print(ultrigDD[1:10])
 ```
