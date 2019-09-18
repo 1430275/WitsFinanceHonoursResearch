@@ -1,0 +1,529 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Opportunity Trading of Short Run Reversals - Evidence from the JSE},
+            pdfauthor={Marc Labe(1445149) and Shane Serebro(1430275)},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Opportunity Trading of Short Run Reversals - Evidence from the JSE}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Marc Labe(1445149) and Shane Serebro(1430275)}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+Introduction
+
+Firms that experience large negative price shocks are often deemed to be
+bad investments in the short run owing to investor sentiment and
+increased volatility in the period after such price shock. However, this
+may not necessarily be the case as seen in Bremer and Sweeney (1991).
+Moreover, shares that experience positive price shocks are often
+considered good investments as many believe this trend will continue for
+the foreseeable future. In this study, an assessment is carried out to
+determine whether these firms experience share price reversals and
+therefore can be traded opportunistically and profitably.
+
+Furthermore, this study will add to the existing literature with regards
+to whether the EMH holds in the Johannesburg Stock Exchange (JSE) or
+does the overreaction hypothesis postulated by De Bondt and Thaler
+(1985) serve as a better explanation of share price movements. If the
+EMH does indeed hold true on the JSE, abnormal profits cannot be
+obtained from trading on significant price movements whereas these
+profits are obtainable if evidence of the overreaction hypothesis can be
+found on the JSE. In essence, this paper sets out to reveal whether
+shares that experience a sudden and significant change in price undergo
+a reversal in the short-term. Furthermore, it aims to determine whether
+investing in a company that experiences a large share price movement is
+a profitable investment strategy for the active trader.
+
+Methodology
+
+Step 1: Importing Packages
+
+First we import the libraries. The `googledrive' package allows us to
+fetch documents directly from Google Drive. This is where we have stored
+our data. The second package `readxl' allows us to firstly import and
+secondly read Microsoft Excel files. This is important as our original
+data came from an excel spreadsheet. Finally, the `qrmtools' package
+provides a range of quantitative finance functions that will be used
+later on.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(googledrive)}
+\KeywordTok{library}\NormalTok{(readxl)}
+\KeywordTok{library}\NormalTok{(qrmtools)}
+\end{Highlighting}
+\end{Shaded}
+
+Step 2: Data Claning and Manipulation
+
+As a part of the Google Drive package, drive\_download finds and
+downloads a file on Google Drive based on an unique identifier (id) into
+the working directory. If the file already exists, this cfunction is
+ignored. Using read\_excel from the readxl package, the data is imported
+into the PriceData dataframe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{id <-}\StringTok{  "1SGigXMnzubpP15Y1W18GqnlVQFiv95jN"}
+\CommentTok{#try(drive_download(as_id(id), overwrite = FALSE), silent = TRUE)}
+\NormalTok{PriceData <-}\StringTok{ }\KeywordTok{read_excel}\NormalTok{(}\StringTok{"Price-Volume-MarketCap.xlsx"}\NormalTok{, }
+                        \DataTypeTok{sheet =} \StringTok{"Price (D)"}\NormalTok{) }
+
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(PriceData[}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, }\DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrllrrr@{}}
+\toprule
+Date & ABG SJ Equity & ABI SJ Equity & ABL SJ Equity & ABT SJ Equity &
+ACL SJ Equity & ACP SJ Equity & ACT SJ Equity\tabularnewline
+\midrule
+\endhead
+2000-01-04 & 2785 & 5240 & NA & NA & 401.63 & NA & 19.25\tabularnewline
+2000-01-05 & 2720 & 5100 & NA & NA & 396.35 & NA & 19.25\tabularnewline
+2000-01-06 & 2695 & 5100 & NA & NA & 410.44 & NA & 19.25\tabularnewline
+2000-01-07 & 2790 & 5070 & NA & NA & 475.62 & NA & 19.25\tabularnewline
+2000-01-10 & 2950 & 5150 & NA & NA & 496.76 & NA & 19.25\tabularnewline
+2000-01-11 & 3115 & 5150 & NA & NA & 453.60 & NA & 19.25\tabularnewline
+2000-01-12 & 3125 & 5120 & NA & NA & 458.00 & NA & 18.33\tabularnewline
+2000-01-13 & 3050 & 5180 & NA & NA & 450.95 & NA & 18.33\tabularnewline
+2000-01-14 & 3080 & 5170 & NA & NA & 458.00 & NA & 17.42\tabularnewline
+2000-01-17 & 3150 & 5180 & NA & NA & 472.97 & NA & 16.50\tabularnewline
+\bottomrule
+\end{longtable}
+
+We now declare 2 functions that deals with basic data cleaning.
+NaFunction creates a data frame that consists of booleans of whether
+each variable in the PriceData dataframe contains only NA or 0 with
+false meaning that the column contains only NA or 0 and vice versa.
+
+colClean1's purpose is to remove the ``SJ Equity'' from the share names
+in the dataframe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{NaFunction <-}\StringTok{  }\ControlFlowTok{function}\NormalTok{(column)\{}
+  \OperatorTok{!}\KeywordTok{all}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(column) }\OperatorTok{|}\StringTok{ }\NormalTok{column }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{)}
+\NormalTok{\}}
+
+
+\NormalTok{colClean1 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x)\{}
+  \KeywordTok{gsub}\NormalTok{(}\StringTok{" SJ Equity"}\NormalTok{, }\StringTok{""}\NormalTok{, }\KeywordTok{names}\NormalTok{(x), }\DataTypeTok{fixed =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+exclP stores the result of running the NaFunction on PriceData. Since
+the NaFunction computes columns containing only NA or 0 to false, we
+subset PriceData where exclP is true.
+
+To ensure correct interpretation, we coerce the date column to the date
+data type.
+
+Finally, we run colClean1 to remove ``SJ Equity'' from all the variable
+names.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{exclP <-}\StringTok{  }\KeywordTok{sapply}\NormalTok{(PriceData, NaFunction)}
+\NormalTok{PriceData <-}\StringTok{  }\NormalTok{PriceData[exclP]}
+\NormalTok{PriceData}\OperatorTok{$}\NormalTok{Date <-}\StringTok{  }\KeywordTok{as.Date}\NormalTok{(PriceData}\OperatorTok{$}\NormalTok{Date)}
+\KeywordTok{names}\NormalTok{(PriceData) <-}\StringTok{ }\KeywordTok{colClean1}\NormalTok{(PriceData)}
+\end{Highlighting}
+\end{Shaded}
+
+Returns
+
+Returns are calculated for each share.
+
+First we extract the share prices only(no dates) in order to convert the
+PriceData dataframe to a numeric matrix.
+
+The returns are the then calculated using the ``returns'' function of
+the qrmtools package and are then returned as a dataframe. As the
+returns function ignores the first row, it is inserted manually using a
+combination of rbind and seq.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PriceDataNew <-}\StringTok{  }\NormalTok{PriceData[, }\OperatorTok{-}\DecValTok{1}\NormalTok{]}
+
+\NormalTok{PriceDataNew <-}\StringTok{  }\KeywordTok{sapply}\NormalTok{(PriceDataNew, }\ControlFlowTok{function}\NormalTok{(x)\{}
+  \KeywordTok{as.numeric}\NormalTok{(x)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in FUN(X[[i]], ...): NAs introduced by coercion
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{returnsDf <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{returns}\NormalTok{(PriceDataNew, }\DataTypeTok{method =} \StringTok{"simple"}\NormalTok{))}
+\NormalTok{returnsDf <-}\StringTok{  }\KeywordTok{rbind}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from =} \DecValTok{0}\NormalTok{, }\DataTypeTok{to =} \DecValTok{0}\NormalTok{, }\DataTypeTok{length.out =} \DecValTok{448}\NormalTok{), returnsDf)}
+
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(returnsDf[(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), (}\DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{)])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrrr@{}}
+\toprule
+ABG & ABI & ABT & ACL & ACP & ACT & ADH & ADI\tabularnewline
+\midrule
+\endhead
+0.0000000 & 0.0000000 & 0 & 0.0000000 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+-0.0233393 & -0.0267176 & NA & -0.0131464 & NA & 0.0000000 & -0.0790041
+& 0\tabularnewline
+-0.0091912 & 0.0000000 & NA & 0.0355494 & NA & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0352505 & -0.0058824 & NA & 0.1588052 & NA & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0573477 & 0.0157791 & NA & 0.0444472 & NA & 0.0000000 & 0.0952474 &
+0\tabularnewline
+0.0559322 & 0.0000000 & NA & -0.0868830 & NA & 0.0000000 & 0.0522142 &
+0\tabularnewline
+0.0032103 & -0.0058252 & NA & 0.0097002 & NA & -0.0477922 & -0.0082988 &
+0\tabularnewline
+-0.0240000 & 0.0117188 & NA & -0.0153930 & NA & 0.0000000 & -0.0749722 &
+0\tabularnewline
+0.0098361 & -0.0019305 & NA & 0.0156337 & NA & -0.0496454 & 0.0360011 &
+0\tabularnewline
+0.0227273 & 0.0019342 & NA & 0.0326856 & NA & -0.0528129 & 0.0434821 &
+0\tabularnewline
+\bottomrule
+\end{longtable}
+
+Step 3: Calculating Maximum Drawdowns and Minimum Drawups
+
+Settings
+
+This block sets parameters for the following functions
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lookback <-}\StringTok{ }\DecValTok{5} 
+\NormalTok{window <-}\StringTok{ }\DecValTok{5}
+\NormalTok{triggerDD <-}\StringTok{ }\OperatorTok{-}\FloatTok{0.15}
+\NormalTok{triggerDU <-}\StringTok{ }\FloatTok{0.15}
+\end{Highlighting}
+\end{Shaded}
+
+Function Declarations
+
+We now declare the functions that will calculate the maximum drawdown
+and minimum drawups:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\tightlist
+\item
+  Maximum drawdowns are calculated according to the following formula:
+  \[ MaxDD = (P_{t} -  max(P_{t}, P_{t-lb} ))/ max(P_{t}, P_{t-lb}) \]
+  with \[ P_{t} \] = the share price at time t and \[lb\] = the lookback
+  period (defined earlier as 5 days)
+\end{enumerate}
+
+We create a for loop which calculates the drawdowns according to the
+formula, with the result being written to a new vector that will be a
+component of the new data frame. However, if the calculations result in
+a NA, it is replaced with a 0 in the new vector
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{maxDD <-}\StringTok{  }\ControlFlowTok{function}\NormalTok{(column, lb)\{}
+\NormalTok{  dd <-}\StringTok{ }\KeywordTok{vector}\NormalTok{(}\DataTypeTok{mode =} \StringTok{"double"}\NormalTok{, }\DataTypeTok{length =}\NormalTok{ (}\KeywordTok{length}\NormalTok{(column) }\OperatorTok{-}\StringTok{ }\NormalTok{lb))}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (lb}\OperatorTok{+}\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(column))\{}
+    \ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(}\KeywordTok{max}\NormalTok{(column[(i}\OperatorTok{-}\NormalTok{lb)}\OperatorTok{:}\NormalTok{i])))\{}
+\NormalTok{      dd[i] <-}\StringTok{ }\DecValTok{0}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{      dd[i] <-}\StringTok{ }\NormalTok{(column[i] }\OperatorTok{-}\StringTok{ }\KeywordTok{max}\NormalTok{(column[(i}\OperatorTok{-}\NormalTok{lb)}\OperatorTok{:}\NormalTok{i], }\DataTypeTok{na.rm =}\NormalTok{ T))}\OperatorTok{/}\KeywordTok{max}\NormalTok{(column[(i}\OperatorTok{-}\NormalTok{lb)}\OperatorTok{:}\NormalTok{i], }\DataTypeTok{na.rm =}\NormalTok{ T)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{(dd)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Similarly with minimum drawdowns, an identical function is created,
+  however with the following formula:
+\end{enumerate}
+
+\[ MaxDD = (P_{t} -  min(P_{t}, P_{t-lb} ))/ min(P_{t}, P_{t-lb})\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{minDU <-}\StringTok{  }\ControlFlowTok{function}\NormalTok{(column, lb)\{}
+\NormalTok{  du <-}\StringTok{ }\KeywordTok{vector}\NormalTok{(}\DataTypeTok{mode =} \StringTok{"double"}\NormalTok{, }\DataTypeTok{length =}\NormalTok{ (}\KeywordTok{length}\NormalTok{(column) }\OperatorTok{-}\StringTok{ }\NormalTok{lb))}
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in}\NormalTok{ (lb}\OperatorTok{+}\DecValTok{1}\NormalTok{)}\OperatorTok{:}\KeywordTok{length}\NormalTok{(column))\{}
+    \ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(}\KeywordTok{min}\NormalTok{(column[(i}\OperatorTok{-}\NormalTok{lb)}\OperatorTok{:}\NormalTok{i])))\{}
+\NormalTok{      du[i] <-}\StringTok{ }\DecValTok{0}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{      du[i] <-}\StringTok{ }\NormalTok{(column[i] }\OperatorTok{-}\StringTok{ }\KeywordTok{min}\NormalTok{(column[(i}\OperatorTok{-}\NormalTok{lb)}\OperatorTok{:}\NormalTok{i], }\DataTypeTok{na.rm =}\NormalTok{ T))}\OperatorTok{/}\KeywordTok{min}\NormalTok{(column[(i}\OperatorTok{-}\NormalTok{lb)}\OperatorTok{:}\NormalTok{i], }\DataTypeTok{na.rm =}\NormalTok{ T)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+ \KeywordTok{return}\NormalTok{(du)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Running the function (with lb set to lookback as defined above), we
+created a new dataframe that stores the maximum drawdowns (DDdf) and the
+minimum drawups (DUdf).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DDdf <-}\StringTok{  }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(PriceData[}\OperatorTok{-}\DecValTok{1}\NormalTok{], maxDD, }\DataTypeTok{lb =}\NormalTok{ lookback))}
+\NormalTok{DUdf <-}\StringTok{  }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{sapply}\NormalTok{(PriceData[}\OperatorTok{-}\DecValTok{1}\NormalTok{], minDU, }\DataTypeTok{lb =}\NormalTok{ lookback))}
+
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(DDdf[(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{), (}\DecValTok{1}\OperatorTok{:}\DecValTok{8}\NormalTok{)])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}rrrrrrrr@{}}
+\toprule
+ABG & ABI & ABT & ACL & ACP & ACT & ADH & ADI\tabularnewline
+\midrule
+\endhead
+0.0000 & 0.0000000 & 0 & 0.0000000 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0000 & 0.0000000 & 0 & 0.0000000 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0000 & 0.0000000 & 0 & 0.0000000 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0000 & 0.0000000 & 0 & 0.0000000 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0000 & 0.0000000 & 0 & 0.0000000 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0000 & -0.0171756 & 0 & -0.0868830 & 0 & 0.0000000 & 0.0000000 &
+0\tabularnewline
+0.0000 & -0.0058252 & 0 & -0.0780256 & 0 & -0.0477922 & -0.0082988 &
+0\tabularnewline
+-0.0240 & 0.0000000 & 0 & -0.0922176 & 0 & -0.0477922 & -0.0826488 &
+0\tabularnewline
+-0.0144 & -0.0019305 & 0 & -0.0780256 & 0 & -0.0950649 & -0.0496232 &
+0\tabularnewline
+0.0000 & 0.0000000 & 0 & -0.0478903 & 0 & -0.1428571 & -0.0082988 &
+0\tabularnewline
+\bottomrule
+\end{longtable}
+
+Cleaning and formatting
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{DDdf <-}\StringTok{  }\KeywordTok{cbind}\NormalTok{(PriceData}\OperatorTok{$}\NormalTok{Date, DDdf)}
+\KeywordTok{names}\NormalTok{(DDdf)[}\KeywordTok{names}\NormalTok{(DDdf) }\OperatorTok{==}\StringTok{ "PriceData$Date"}\NormalTok{] <-}\StringTok{ "Date"}
+\NormalTok{DUdf <-}\StringTok{  }\KeywordTok{cbind}\NormalTok{(PriceData}\OperatorTok{$}\NormalTok{Date, DUdf)}
+\KeywordTok{names}\NormalTok{(DUdf)[}\KeywordTok{names}\NormalTok{(DUdf) }\OperatorTok{==}\StringTok{ "PriceData$Date"}\NormalTok{] <-}\StringTok{ "Date"}
+\end{Highlighting}
+\end{Shaded}
+
+Trigger Indices
+
+The following 2 functions create one list of lists respectively that
+captures when the drawdowns and drawups exceed the trigger value defined
+above.
+
+The function consists of a while loop that returns the index (i.e.~row
+number) of all the values within the column that exceed the trigger
+(-0.15 for drawdowns and 0.15 for drawups). An if statement if used to
+allow the while loop to continue ignoring any NA values
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trigIndexDD <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(DDdf[}\OperatorTok{-}\DecValTok{1}\NormalTok{], }\ControlFlowTok{function}\NormalTok{(i)\{}
+\NormalTok{  trigDD <-}\StringTok{ }\KeywordTok{vector}\NormalTok{(}\DataTypeTok{mode =} \StringTok{"integer"}\NormalTok{, }\DataTypeTok{length =} \DecValTok{1}\NormalTok{)}
+\NormalTok{  l =}\StringTok{ }\KeywordTok{length}\NormalTok{(i)}
+\NormalTok{  s =}\StringTok{ }\DecValTok{0}
+\NormalTok{  pos =}\StringTok{ }\DecValTok{1}
+  \ControlFlowTok{while}\NormalTok{(s }\OperatorTok{<=}\StringTok{ }\NormalTok{l)\{}
+\NormalTok{    x =}\StringTok{ }\KeywordTok{which}\NormalTok{(i[(s}\OperatorTok{+}\DecValTok{1}\NormalTok{)}\OperatorTok{:}\NormalTok{l] }\OperatorTok{<=}\StringTok{ }\NormalTok{triggerDD)[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{s}
+    \ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(x))\{}
+      \ControlFlowTok{break}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{      trigDD[pos] =}\StringTok{ }\NormalTok{x}
+\NormalTok{    \}}
+\NormalTok{    s =}\StringTok{ }\NormalTok{trigDD[pos] }\OperatorTok{+}\StringTok{ }\NormalTok{window}
+\NormalTok{    pos =}\StringTok{ }\NormalTok{pos }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{(trigDD)}
+\NormalTok{\})}
+
+\NormalTok{trigIndexDU <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(DUdf[}\OperatorTok{-}\DecValTok{1}\NormalTok{], }\ControlFlowTok{function}\NormalTok{(i)\{}
+\NormalTok{  trigDU <-}\StringTok{ }\KeywordTok{vector}\NormalTok{(}\DataTypeTok{mode =} \StringTok{"integer"}\NormalTok{, }\DataTypeTok{length =} \DecValTok{1}\NormalTok{)}
+\NormalTok{  l =}\StringTok{ }\KeywordTok{length}\NormalTok{(i)}
+\NormalTok{  s =}\StringTok{ }\DecValTok{0}
+\NormalTok{  pos =}\StringTok{ }\DecValTok{1}
+  \ControlFlowTok{while}\NormalTok{(s }\OperatorTok{<=}\StringTok{ }\NormalTok{l)\{}
+\NormalTok{    x =}\StringTok{ }\KeywordTok{which}\NormalTok{(i[(s}\OperatorTok{+}\DecValTok{1}\NormalTok{)}\OperatorTok{:}\NormalTok{l] }\OperatorTok{>=}\StringTok{ }\NormalTok{triggerDU)[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{s}
+    \ControlFlowTok{if}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(x))\{}
+      \ControlFlowTok{break}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{      trigDU[pos] =}\StringTok{ }\NormalTok{x}
+\NormalTok{    \}}
+\NormalTok{    s =}\StringTok{ }\NormalTok{trigDU[pos] }\OperatorTok{+}\StringTok{ }\NormalTok{window}
+\NormalTok{    pos =}\StringTok{ }\NormalTok{pos }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{(trigDU)}
+\NormalTok{\})}
+
+
+\KeywordTok{print}\NormalTok{(trigIndexDD[}\DecValTok{1}\OperatorTok{:}\DecValTok{5}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $ABG
+## [1]   19  508 1607 1618 2202 3987
+## 
+## $ABI
+## [1] 0
+## 
+## $ABT
+## [1] 0
+## 
+## $ACL
+##  [1]   40   49   74  206  221  512  534  645  685  736 2188 2194 2200 2213
+## [15] 2219 2257 2325 2366 2542 3729 3811 3836 3873 3890 3903 3914 3922 3946
+## [29] 3952 3963 3969 3987 3993 4009 4027 4050 4103 4118 4325 4356 4363 4465
+## [43] 4484 4490 4540 4579 4594 4607 4620 4652 4665 4698 4729 4838
+## 
+## $ACP
+## [1] 1620
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ultrigDD <-}\StringTok{ }\KeywordTok{unlist}\NormalTok{(trigIndexDD)}
+\NormalTok{ultrigDD <-}\StringTok{ }\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{t}\NormalTok{(ultrigDD))}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

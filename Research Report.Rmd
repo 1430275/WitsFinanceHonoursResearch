@@ -2,8 +2,8 @@
 title: "Opportunity Trading of Short Run Reversals - Evidence from the JSE"
 author: "Marc Labe(1445149) and Shane Serebro(1430275)"
 output:
-  word_document: default
   pdf_document: default
+  word_document: default
   html_document: default
 ---
 
