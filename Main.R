@@ -58,13 +58,13 @@ PriceDataNew <-  sapply(PriceDataNew, function(x){
 returnsDf <- as.data.frame(returns(PriceDataNew, method = "simple"))
 returnsDf <-  rbind(seq(from = 0, to = 0, length.out = 448), returnsDf)
 
-
+#settings for functions
 lookback <- 5 
 window <- 5
 triggerDD <- -0.15
 triggerDU <- 0.15
 
-
+#functions to calculate maximum drawdowns and minimum drawups
 maxDD <-  function(column, lb){
 dd <- vector(mode = "double", length = (length(column) - lb))
   for (i in (lb+1):length(column)){
@@ -76,10 +76,6 @@ dd <- vector(mode = "double", length = (length(column) - lb))
   }
   return(dd)
 }
-
-DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lookback))
-DDdf <-  cbind(PriceData$Date, DDdf)
-names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
 
 minDU <-  function(column, lb){
 du <- vector(mode = "double", length = (length(column) - lb))
@@ -93,11 +89,17 @@ du <- vector(mode = "double", length = (length(column) - lb))
   return(du)
 }
 
+#functions run over the data and stored in a new dataframe
+DDdf <-  as.data.frame(sapply(PriceData[-1], maxDD, lb = lookback))
+DDdf <-  cbind(PriceData$Date, DDdf)
+names(DDdf)[names(DDdf) == "PriceData$Date"] <- "Date"
+
 DUdf <-  as.data.frame(sapply(PriceData[-1], minDU, lb = lookback))
 DUdf <-  cbind(PriceData$Date, DUdf)
 names(DUdf)[names(DUdf) == "PriceData$Date"] <- "Date"
 
-
+#function that returns the index of the first time the drawdown/up breaches the trigger value as defined
+#in the settings above
 
 trigIndexDD <- lapply(DDdf[-1], function(i){
 trigDD <- vector(mode = "integer", length = 1)
@@ -135,27 +137,10 @@ trigDU <- vector(mode = "integer", length = 1)
   return(trigDU)
 })
 
-
+#delisting the lists created above to 1 column for each trigger value to be used to calculate CAARs and Buy and Hold Returns
 
 ultrigDD <- unlist(trigIndexDD)
 ultrigDD <- as.data.frame(t(ultrigDD))
 
 ultrigDU <- unlist(trigIndexDU)
 ultrigDU <- as.data.frame(t(ultrigDU))
-
-vlookup <- function(x,y) x[sub("_3.*", "", colnames(y))]
-
-h <- match(grepl("^.{0,3}", colnames(ultrigDD)), colnames(returnsDf))
-
-i <- gregexpr("^.{0,3}", colnames(ultrigDD))
-
-j <-  as.vector(colnames(ultrigDD))
-
-k <-  as.data.frame((t(substr(colnames(ultrigDD),1, 3))))
-  
-
-
-
-df <-  lapply(returnsDf, FUN = vlookup, y = ultrigDD)
-
-rm(DDdf, DUdf, PriceDataNew, exclP, id, lookback, triggerDD, triggerDU, window, colClean, maxDD, minDU)
