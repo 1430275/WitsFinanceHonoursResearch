@@ -143,7 +143,19 @@ ultrigDD <- as.data.frame(t(ultrigDD))
 ultrigDU <- unlist(trigIndexDU)
 ultrigDU <- as.data.frame(t(ultrigDU))
 
+vlookup <- function(x,y) x[sub("_3.*", "", colnames(y))]
 
-# valuesDD <- mapply(function(x,y) x[sub("_3.*", "", colnames(y))], as.data.frame(returnsDf), trigIndexDD)
+h <- match(grepl("^.{0,3}", colnames(ultrigDD)), colnames(returnsDf))
+
+i <- gregexpr("^.{0,3}", colnames(ultrigDD))
+
+j <-  as.vector(colnames(ultrigDD))
+
+k <-  as.data.frame((t(substr(colnames(ultrigDD),1, 3))))
+  
+
+
+
+df <-  lapply(returnsDf, FUN = vlookup, y = ultrigDD)
 
 rm(DDdf, DUdf, PriceDataNew, exclP, id, lookback, triggerDD, triggerDU, window, colClean, maxDD, minDU)
