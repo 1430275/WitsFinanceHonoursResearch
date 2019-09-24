@@ -6,4 +6,4 @@ The Proposal.pdf document contains our original proposal that was submitted. Som
 
 ## To Do List
 
-- [] Fix Drawups and Drawdowns calculation to exclude values lower than 100.
+1. Fix Drawups and Drawdowns calculation to exclude values lower than 100.
