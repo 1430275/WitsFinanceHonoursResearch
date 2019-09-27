@@ -5,3 +5,6 @@ The Proposal.pdf document contains our original proposal that was submitted. Som
 ## To Do List
 
 1. Fix Drawups and Drawdowns calculation to exclude values lower than 100.
+2. Calculate Cumulative Average Abnormal Returns and Buy and Hold returns (for 5 day, 10 day and 21 day periods)
+3. Descriptive Stats
+4. Significance and Hypothesis Testing (possibly two tailed t-test) 
