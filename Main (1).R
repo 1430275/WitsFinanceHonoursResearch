@@ -6,7 +6,7 @@ library(readxl)
 library(qrmtools)
 library(tidyverse)
 library(PerformanceAnalytics)
-
+library(tbl2xts)
 
 
 # Data Import -------------------------------------------------------------
@@ -24,6 +24,11 @@ PriceData <- read_excel("Price-Volume-MarketCap.xlsx",
 mcaps <- read_excel("Price-Volume-MarketCap.xlsx", 
                         sheet = "Mcap (D)",
                         na = c("", "NA", "#N/A", "#N/A #N/A", "#N/A Invalid Security"))
+
+risk_free <- read_excel("Price-Volume-MarketCap.xlsx", 
+                        sheet = "RSA 10Y Bond")
+
+alsi <- read_excel('ALSI.xlsx', sheet = "ALSI")
 
 #file.remove("Price-Volume-MarketCap.xlsx")
 
@@ -81,6 +86,21 @@ price100 <- PriceDataNew %>% as.data.frame() %>% select_if(~!(all(is.na(.))))
 #Create a new dataframe of returns using the returns function of qrmtools and clean out
 returnsDf <- as.data.frame(returns(price100, method = "simple"))
 returnsDf <-  rbind(seq(from = 0, to = 0, length.out = ncol(returnsDf)), returnsDf)
+
+# Market returns
+mkt <- alsi %>% select(Close) %>%
+  returns(., method = 'simple') %>% 
+  as.data.frame() %>%
+  rbind(seq(from = 0, to = 0, length.out = ncol(.)), .) %>%
+  cbind(alsi$Date, .)
+
+colnames(mkt) <- c("Date", 'Return')
+
+#convert annual yield to daily yield
+rf <- risk_free %>%
+  mutate(Yield = Yield / 100) %>%
+  mutate(yield = ((1 + Yield) ^ (1/365) - 1)) %>%
+  select(Date, yield)
 
 # Liquidity filter
 
@@ -163,6 +183,8 @@ lookback <- 5
 window <- 5
 triggerDD <- -0.15
 triggerDU <- 0.15
+
+
 
 #functions to calculate maximum drawdowns and minimum drawups
 maxDD <-  function(column, lb){
@@ -264,11 +286,30 @@ event_returns <- function(trigger_index, event_days, prices){
     r <- 1
     
     for (i in x) {
-      a <- i + 1
-      b <- a + event_days 
-      temp <- prices[a:b, j, drop = F]
-      Rets[r,] <- temp %>% returns(., method = "simple") %>% Return.cumulative()
-      r <- r + 1
+      
+      prev <- i - 5
+      
+      if (prev < 0) {
+        prev <- 0
+      }
+      
+      tmp <- prices[prev:(i-1), j, drop = FALSE]
+      
+      no_trades <- duplicated(tmp, nmax = 1) %>% sum() 
+      # sum number of times same value appears more than once
+      # that means no trade occurred that day
+
+      if (no_trades < 3 & nrow(tmp) > 0) {
+        a <- i + 1
+        b <- a + event_days 
+        temp <- prices[a:b, j, drop = FALSE]
+        Rets[r,] <- temp %>% returns(., method = "simple") %>% Return.cumulative()
+        r <- r + 1
+      } else {
+        Rets[r,] <- NA
+        r <- r + 1
+      }
+      
     }
     
     mylist[[pos]] <- Rets
@@ -277,6 +318,7 @@ event_returns <- function(trigger_index, event_days, prices){
   names(mylist) <- names(trigger_index)
   return(mylist)
 }
+
 
 DD_event_6 <- event_returns(trigIndexDD, 6, price100)
 DD_event_10 <- event_returns(trigIndexDD, 10, price100)
@@ -287,7 +329,12 @@ DU_event_10 <- event_returns(trigIndexDU, 10, price100)
 DU_event_21 <- event_returns(trigIndexDU, 21, price100)
 
 
+# Abnormal returns -------------------------------------
 
+# Bond has more days than prices and market despite being between the same start and end dates
 
+# So we'll need to create xts objects in order to match market days with yield days
 
-
+mkt_xts <- mkt %>% tbl_xts()
+rf_xts <- rf %>% tbl_xts()
+rf_xts <- rf_xts[index(mkt_xts)]
