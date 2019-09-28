@@ -4,7 +4,6 @@ library(googledrive)
 library(readxl)
 library(qrmtools)
 library(dplyr)
-library(lubridate)
 library(PerformanceAnalytics)
 
 # Data Import -------------------------------------------------------------
@@ -152,40 +151,52 @@ trigDU <- vector(mode = "integer", length = 1)
   return(trigDU)
 })
 
-#delisting the lists created above to 1 column for each trigger value to be used to calculate CAARs and Buy and Hold Returns
+# It's better to loop through the list of objects than to unlist them into dataframes
+# So I've deleted the dataframes, kept objects in the list
 
-ultrigDD <- unlist(trigIndexDD)
-ultrigDD <- as.data.frame(t(ultrigDD))
+# The function below is for calculating the returns n days after the event.
+# I've taken the code I made for 21 days and put it into a function
+# Otherwise, you'd have to copy and paste the code 6 times (3 for Drawdowns and 3 for drawups)
+# This is bad practive because the only part of the code that changes is the number of days
 
-ultrigDU <- unlist(trigIndexDU)
-ultrigDU <- as.data.frame(t(ultrigDU))
-
-# I'm going to ignore the dataframes and loop through the objects in the list to get 
-# returns
-
-event_rets <- vector("list", length = length(triggerDD))
-
-j = 0
-
-pos <- 1
-
-for (x in trigIndexDD) { 
-  j = j + 1
-  Ret_21 <- matrix(0, nrow = length(x), ncol = 1)
-  r <- 1
-  for (i in x) {
-    a <- i + 1
-    b <- a + 21 
-    temp <- price100[a:b, j, drop = F]
-    Ret_21[r,] <- temp %>% returns(., method = "simple") %>% Return.cumulative()
-    r <- r + 1
+event_returns <- function(trigger_index, event_days, prices){
+ 
+  j = 0 # initialise column number counter variable
+  
+  pos <- 1 # counter for number of elements in the list
+  
+  mylist <- vector("list", length = length(trigger_index))
+  
+  for (x in trigger_index) { 
+    j = j + 1 # column number
+    
+    if (j > ncol(prices)){
+      break # if j surpasses the number of columns, exit the for loop
+    }
+    
+    Rets <- matrix(0, nrow = length(x), ncol = 1)
+    r <- 1
+      
+    for (i in x) {
+      a <- i + 1
+      b <- a + event_days 
+      temp <- prices[a:b, j, drop = F]
+      Rets[r,] <- temp %>% returns(., method = "simple") %>% Return.cumulative()
+      r <- r + 1
+    }
+      
+    mylist[[pos]] <- Rets
+    pos <- pos + 1
   }
-  event_rets[[pos]] <- Ret_21
-  pos <- pos + 1
+  names(mylist) <- names(trigger_index)
+  return(mylist)
 }
 
-# haven't run this as I haven't had time to debug any potential errors
+DD_event_6 <- event_returns(trigIndexDD, 6, price100)
+DD_event_10 <- event_returns(trigIndexDD, 10, price100)
+DD_event_21 <- event_returns(trigIndexDD, 21, price100)
 
-# also have a look at equities EEL, BAU, AME. Their returns are always large when they # trade but they have a lot of days when they don't trade
-# basically, they trigger 15% every time they trade
-# probably illiquid stocks, these need to be filtered for with a liquidity filter
+DU_event_6 <- event_returns(trigIndexDU, 6, price100)
+DU_event_10 <- event_returns(trigIndexDU, 10, price100)
+DU_event_21 <- event_returns(trigIndexDU, 21, price100)
+
