@@ -335,7 +335,6 @@ sig <- matrix(0, nrow = 6, ncol = 1)
 for (df in CARs) {
   alphas <- do.call(rbind, df)
   sig[i,] <- colSums(alphas[, 4, drop = F] < 0.05, na.rm =T) / nrow(alphas)
-  hold_days[[i]] <- events[i,]
   i <- i + 1
 }
 
