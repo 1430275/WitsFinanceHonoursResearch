@@ -1,7 +1,7 @@
-trigger_index = trigIndexDD; event_days = 21; market = mkt_xts; risk_free_rate = rf_xts; prices = price100
+"trigger_index = trigIndexDU; event_days = 10; market = mkt_xts; risk_free_rate = rf_xts; prices = price100" # arguments
 
-'abnormal_returns <- function(trigger_index, event_days, market, risk_free_rate){'
-  
+abnormal_returns <- function(trigger_index, event_days, prices, market, risk_free_rate){
+
   j = 0 # initialise column number counter variable
   
   pos <- 1 # counter for number of elements in the list
@@ -42,7 +42,11 @@ trigger_index = trigIndexDD; event_days = 21; market = mkt_xts; risk_free_rate =
       m <- a + 1
       
       if (b > nrow(market)) {
+        CAR[r,] <- NA
+        event_dates[[r]] <- paste(ticker, sep = "-", date_range[1])
+        r <- r + 1
         break
+        # if the 21 days is after the last day in the sample, next iteration
       }
       
       date_range <- index(market[m:b])
@@ -50,6 +54,7 @@ trigger_index = trigIndexDD; event_days = 21; market = mkt_xts; risk_free_rate =
       if (no_trades < 3 & nrow(tmp) > 0) {
 
         rets <- temp %>% returns(., method = "simple")
+        
         
         rf_hold <- risk_free_rate[date_range]
         mkt_hold <- market[date_range]
@@ -84,5 +89,6 @@ trigger_index = trigIndexDD; event_days = 21; market = mkt_xts; risk_free_rate =
     pos <- pos + 1
   }
   names(mylist) <- names(trigger_index)
-  'return(mylist)'
-'}'
+  return(mylist)
+}
+

@@ -262,71 +262,7 @@ trigIndexDU <- lapply(DUdf[-1], function(i){
 # It's better to loop through the list of objects than to unlist them into dataframes
 # So I've deleted the dataframes, kept objects in the list
 
-# The function below is for calculating the returns n days after the event.
-# I've taken the code I made for 21 days and put it into a function
-# Otherwise, you'd have to copy and paste the code 6 times (3 for Drawdowns and 3 for drawups)
-# This is bad practive because the only part of the code that changes is the number of days
-
-event_returns <- function(trigger_index, event_days, prices){
-  
-  j = 0 # initialise column number counter variable
-  
-  pos <- 1 # counter for number of elements in the list
-  
-  mylist <- vector("list", length = length(trigger_index))
-  
-  for (x in trigger_index) { 
-    j = j + 1 # column number
-    
-    if (j > ncol(prices)){
-      break # if j surpasses the number of columns, exit the for loop
-    }
-    
-    Rets <- matrix(0, nrow = length(x), ncol = 1)
-    r <- 1
-    
-    for (i in x) {
-      
-      prev <- i - 5
-      
-      if (prev < 0) {
-        prev <- 0
-      }
-      
-      tmp <- prices[prev:(i-1), j, drop = FALSE]
-      
-      no_trades <- duplicated(tmp, nmax = 1) %>% sum() 
-      # sum number of times same value appears more than once
-      # that means no trade occurred that day
-
-      if (no_trades < 3 & nrow(tmp) > 0) {
-        a <- i + 1
-        b <- a + event_days 
-        temp <- prices[a:b, j, drop = FALSE]
-        Rets[r,] <- temp %>% returns(., method = "simple") %>% Return.cumulative()
-        r <- r + 1
-      } else {
-        Rets[r,] <- NA
-        r <- r + 1
-      }
-      
-    }
-    
-    mylist[[pos]] <- Rets
-    pos <- pos + 1
-  }
-  names(mylist) <- names(trigger_index)
-  return(mylist)
-}
-
-
-DD_event_6 <- event_returns(trigIndexDD, 6, price100)
-DD_event_10 <- event_returns(trigIndexDD, 10, price100)
-DD_event_21 <- event_returns(trigIndexDD, 21, price100)
-
-DU_event_6 <- event_returns(trigIndexDU, 6, price100)
-DU_event_10 <- event_returns(trigIndexDU, 10, price100)
-DU_event_21 <- event_returns(trigIndexDU, 21, price100)
+# I've removed the event_day returns, since the abnormal returns are what's needed
 
 
 # Abnormal returns -------------------------------------
@@ -338,3 +274,45 @@ DU_event_21 <- event_returns(trigIndexDU, 21, price100)
 mkt_xts <- mkt %>% tbl_xts()
 rf_xts <- rf %>% tbl_xts()
 rf_xts <- rf_xts[index(mkt_xts)]
+
+# This loads the function from the CAR.R script into your global environment
+# Make sure the file is in the same folder as the Main script
+source('CAR.R')
+
+DD_CAR_21 <- abnormal_returns(trigger_index = trigIndexDD, 
+                              event_days = 21,
+                              prices = price100,
+                              market = mkt_xts,
+                              risk_free_rate = rf_xts)
+
+DD_CAR_10 <- abnormal_returns(trigger_index = trigIndexDD, 
+                              event_days = 10,
+                              prices = price100,
+                              market = mkt_xts,
+                              risk_free_rate = rf_xts)
+
+DD_CAR_6 <- abnormal_returns(trigger_index = trigIndexDD, 
+                              event_days = 6,
+                              prices = price100,
+                              market = mkt_xts,
+                              risk_free_rate = rf_xts)
+
+DU_CAR_21 <- abnormal_returns(trigger_index = trigIndexDU, 
+                               event_days = 21,
+                               prices = price100,
+                               market = mkt_xts,
+                               risk_free_rate = rf_xts)
+
+
+DU_CAR_10 <- abnormal_returns(trigger_index = trigIndexDU, 
+                              event_days = 10,
+                              prices = price100,
+                              market = mkt_xts,
+                              risk_free_rate = rf_xts)
+
+
+DU_CAR_6 <- abnormal_returns(trigger_index = trigIndexDU, 
+                              event_days = 6,
+                              prices = price100,
+                              market = mkt_xts,
+                              risk_free_rate = rf_xts)
