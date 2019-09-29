@@ -316,3 +316,32 @@ DU_CAR_6 <- abnormal_returns(trigger_index = trigIndexDU,
                               prices = price100,
                               market = mkt_xts,
                               risk_free_rate = rf_xts)
+
+CARs <- setNames(lapply(ls(pattern="_CAR_"), function(x) get(x)), ls(pattern="_CAR_"))
+
+hold_days <- vector('list', length = 6)
+
+DDs <- sprintf("DD %s",c(6,10,21)) %>% as.data.frame()
+DUs <- sprintf("DU %s",c(6,10,21)) %>% as.data.frame()
+
+events <- rbind(DDs, DUs)
+
+events <- c("DD 6", "DD 10", "DD")
+
+remove(DDs, DUs)
+
+i <- 1
+
+sig <- matrix(0, nrow = 6, ncol = 1)
+
+for (df in CARs) {
+  alphas <- do.call(rbind, df)
+  sig[i,] <- colSums(alphas[, 4, drop = F] < 0.05, na.rm =T) / nrow(alphas)
+  hold_days[[i]] <- events[i,]
+  i <- i + 1
+}
+
+sig <- sig %>% as.data.frame()
+
+rownames(sig) <- events[,1]
+colnames(sig) <- '% of significant alphas'
