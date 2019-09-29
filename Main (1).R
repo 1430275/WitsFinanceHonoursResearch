@@ -321,12 +321,10 @@ CARs <- setNames(lapply(ls(pattern="_CAR_"), function(x) get(x)), ls(pattern="_C
 
 hold_days <- vector('list', length = 6)
 
-DDs <- sprintf("DD %s",c(6,10,21)) %>% as.data.frame()
-DUs <- sprintf("DU %s",c(6,10,21)) %>% as.data.frame()
+DDs <- sprintf("DD %s",c(10,21, 6)) %>% as.data.frame()
+DUs <- sprintf("DU %s",c(10,21, 6)) %>% as.data.frame()
 
 events <- rbind(DDs, DUs)
-
-events <- c("DD 6", "DD 10", "DD")
 
 remove(DDs, DUs)
 
