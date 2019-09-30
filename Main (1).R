@@ -291,8 +291,8 @@ DD_CAR_10 <- abnormal_returns(trigger_index = trigIndexDD,
                               market = mkt_xts,
                               risk_free_rate = rf_xts)
 
-DD_CAR_6 <- abnormal_returns(trigger_index = trigIndexDD, 
-                              event_days = 6,
+DD_CAR_5 <- abnormal_returns(trigger_index = trigIndexDD, 
+                              event_days = 5,
                               prices = price100,
                               market = mkt_xts,
                               risk_free_rate = rf_xts)
@@ -311,8 +311,8 @@ DU_CAR_10 <- abnormal_returns(trigger_index = trigIndexDU,
                               risk_free_rate = rf_xts)
 
 
-DU_CAR_6 <- abnormal_returns(trigger_index = trigIndexDU, 
-                              event_days = 6,
+DU_CAR_5 <- abnormal_returns(trigger_index = trigIndexDU, 
+                              event_days = 5,
                               prices = price100,
                               market = mkt_xts,
                               risk_free_rate = rf_xts)
@@ -321,8 +321,8 @@ CARs <- setNames(lapply(ls(pattern="_CAR_"), function(x) get(x)), ls(pattern="_C
 
 hold_days <- vector('list', length = 6)
 
-DDs <- sprintf("DD %s",c(10,21, 6)) %>% as.data.frame()
-DUs <- sprintf("DU %s",c(10,21, 6)) %>% as.data.frame()
+DDs <- sprintf("DD %s",c(10,21, 5)) %>% as.data.frame()
+DUs <- sprintf("DU %s",c(10,21, 5)) %>% as.data.frame()
 
 events <- rbind(DDs, DUs)
 
