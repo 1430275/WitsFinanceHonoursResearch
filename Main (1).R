@@ -7,6 +7,9 @@ library(qrmtools)
 library(tidyverse)
 library(PerformanceAnalytics)
 library(tbl2xts)
+library(xlsx)
+library(psych)
+
 
 
 # Data Import -------------------------------------------------------------
@@ -342,3 +345,22 @@ sig <- sig %>% as.data.frame()
 
 rownames(sig) <- events[,1]
 colnames(sig) <- '% of significant alphas'
+
+DD5 <- data.frame(DD_CAR_5 = unlist(DD_CAR_5))
+write.xlsx(DD5, file = "CARS.xlsx", sheetName = "DD5", col.names = TRUE, row.names = TRUE,append = TRUE)
+DD10 <- data.frame(DD_CAR_10 = unlist(DD_CAR_10))
+write.xlsx(DD10, file = "CARS.xlsx", sheetName = "DD10", col.names = TRUE, row.names = TRUE, append = TRUE)
+DD21 <- data.frame(DD_CAR_21 = unlist(DD_CAR_21))
+write.xlsx(DD21, file = "CARS.xlsx", sheetName = "DD21", col.names = TRUE, row.names = TRUE, append = TRUE)
+
+DU5 <- data.frame(DU_CAR_5 = unlist(DU_CAR_5))
+write.xlsx(DU5, file = "CARS.xlsx", sheetName = "DU5", col.names = TRUE, row.names = TRUE,append = TRUE)
+DU10 <- data.frame(DU_CAR_10 = unlist(DU_CAR_10))
+write.xlsx(DU10, file = "CARS.xlsx", sheetName = "DU10", col.names = TRUE, row.names = TRUE, append = TRUE)
+DU21 <- data.frame(DU_CAR_21 = unlist(DU_CAR_21))
+write.xlsx(DU21, file = "CARS.xlsx", sheetName = "DU21", col.names = TRUE, row.names = TRUE, append = TRUE)
+
+
+write.xlsx(x= alphas, file= "CARS.xlsx", sheetName = "Alphas", append= TRUE)
+
+write.xlsx(x= sig, file= "CARS.xlsx", sheetName = "% Significant", append= TRUE)
