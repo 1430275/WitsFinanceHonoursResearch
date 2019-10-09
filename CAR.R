@@ -55,6 +55,8 @@ abnormal_returns <- function(trigger_index, event_days, prices, market, risk_fre
 
         rets <- temp %>% returns(., method = "simple")
         
+        rets <-  rets - risk_free_rate[date_range]
+        
         
         rf_hold <- risk_free_rate[date_range]
         mkt_hold <- market[date_range]

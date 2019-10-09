@@ -1,40 +1,88 @@
 rm(list = ls())
 
-DD5 <- read_excel("CARS.xlsx", sheet = "DD5", col_types = c("blank", "numeric", "blank","blank"))
-DD10 <- read_excel("CARS.xlsx", sheet = "DD10", col_types = c("blank", "numeric"))
-DD21 <- read_excel("CARS.xlsx", sheet = "DD21", col_types = c("blank", "numeric"))
-DU5 <- read_excel("CARS.xlsx", sheet = "DU5", col_types = c("blank", "numeric"))
-DU10 <- read_excel("CARS.xlsx", sheet = "DU10", col_types = c("blank", "numeric"))
-DU21 <- read_excel("CARS.xlsx", sheet = "DU21", col_types = c("blank", "numeric"))
+library(readxl)
+library(ggplot2)
+
+DD5 <- as.numeric(read_excel("CARS.xlsx", sheet = "DD5", col_types = c("blank", "numeric")))
+DD10 <- as.numeric(read_excel("CARS.xlsx", sheet = "DD10", col_types = c("blank", "numeric")))
+DD21 <- as.numeric(read_excel("CARS.xlsx", sheet = "DD21", col_types = c("blank", "numeric")))
+DU5 <- as.numeric(read_excel("CARS.xlsx", sheet = "DU5", col_types = c("blank", "numeric")))
+DU10 <- as.numeric(read_excel("CARS.xlsx", sheet = "DU10", col_types = c("blank", "numeric")))
+DU21 <- as.numeric(read_excel("CARS.xlsx", sheet = "DU21", col_types = c("blank", "numeric")))
 
 png("DD5.png")
-hDD5 <-hist(DD5[[1]], breaks=20, col="blue",
-        main="DD5", xlab = "", ylab = "")
+# hDD5 <-hist(DD5[[1]], breaks=20, col="blue",
+#         main="DD5", xlab = "", ylab = "")
+
+qplot(DD5$DD_CAR_5,
+      geom="histogram",
+      binwidth=50, 
+      xlab="CAR",
+      ylab="",  
+      fill=I("blue"), 
+      col=I("red"), 
+      alpha=I(.2),
+      ....=c(20,50))
 dev.off()
 
 png("DD10.png")
-hDD10 <-hist(DD10[[1]], breaks=20, col="blue",
-            main="DD10", xlab = "", ylab = "")
+qplot(DD10$DD_CAR_10,
+      geom="histogram",
+      binwidth=50, 
+      xlab="CAR",
+      ylab="",  
+      fill=I("blue"), 
+      col=I("red"), 
+      alpha=I(.2),
+      ....=c(20,50))
 dev.off()
 
 png("DD21.png")
-hDD21 <-hist(DD21[[1]], breaks=20, col="blue",
-            main="DD21", xlab = "", ylab = "")
+qplot(DD21$DD_CAR_21,
+      geom="histogram",
+      binwidth=50, 
+      xlab="CAR",
+      ylab="",  
+      fill=I("blue"), 
+      col=I("red"), 
+      alpha=I(.2),
+      ....=c(20,50))
 dev.off()
 
 png("DU5.png")
-hDU5 <-hist(DU5[[1]], breaks=20, col="blue",
-            main="DU5", xlab = "", ylab = "")
+qplot(DU5$DU_CAR_5,
+      geom="histogram",
+      binwidth=50, 
+      xlab="CAR",
+      ylab="",  
+      fill=I("blue"), 
+      col=I("red"), 
+      alpha=I(.2),
+      ....=c(20,50))
 dev.off()
 
 png("DU10.png")
-hDU10 <-hist(DU10[[1]], breaks=20, col="blue",
-            main="DU10", xlab = "", ylab = "")
+qplot(DU10$DU_CAR_10,
+      geom="histogram",
+      binwidth=50, 
+      xlab="CAR",
+      ylab="",  
+      fill=I("blue"), 
+      col=I("red"), 
+      alpha=I(.2),
+      ....=c(20,50))
 dev.off()
 
 png("DU21.png")
-hDU21 <-hist(DU21[[1]], breaks=20, col="blue",
-            main="DU21", xlab = "", ylab = "")
+qplot(DU21$DU_CAR_21,
+      geom="histogram",
+      binwidth=50, 
+      xlab="CAR",
+      ylab="",  
+      fill=I("blue"), 
+      col=I("red"), 
+      alpha=I(.2),
+      ....=c(20,50))
 dev.off()
 
 
